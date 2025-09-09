@@ -100,6 +100,7 @@ export default function About() {
                         backgroundColor: 'transparent'
                       }}
                     >
+                      <source src="/videos/paul-fernandez-intro.mp4" type="video/mp4" />
                       <source src="/videos/paul-fernandez-intro-minimal.mp4" type="video/mp4" />
                       <source src="/videos/paul-fernandez-intro-compatible.mp4" type="video/mp4" />
                       <source src="/videos/IMG_0475.MOV" type="video/quicktime" />
