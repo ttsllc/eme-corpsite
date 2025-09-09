@@ -108,6 +108,9 @@ export default function About() {
                       お使いのブラウザは動画をサポートしていません。
                     </video>
                     
+                    {/* 黒の透明オーバーレイ */}
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
+                    
                     {/* Video Overlay Badge */}
                     <div className="absolute top-4 left-4 bg-primary-500/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
                       <div className="flex items-center space-x-2">
