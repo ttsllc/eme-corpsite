@@ -89,10 +89,10 @@ export default function About() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Video Section with Enhanced Overlay */}
                 <div className="relative p-6 lg:p-8">
-                  {/* Video Container - 元の動画画角（縦型9:16） */}
-                  <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto max-w-xs aspect-[9/16]">
+                  {/* Video Container - 元の動画サイズ（自然な表示） */}
+                  <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto max-w-sm">
                     <video 
-                      className="w-full h-full object-contain"
+                      className="w-full h-auto"
                       controls
                       muted
                       preload="metadata"
