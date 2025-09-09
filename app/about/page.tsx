@@ -98,7 +98,7 @@ export default function About() {
                       preload="metadata"
                       style={{ 
                         backgroundColor: 'transparent',
-                        filter: 'brightness(0.7) contrast(1.1)'
+                        filter: 'brightness(0.5) contrast(1.2)'
                       }}
                     >
                       <source src="/videos/paul-fernandez-intro.mp4" type="video/mp4" />
