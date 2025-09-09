@@ -89,16 +89,15 @@ export default function About() {
             <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl overflow-hidden card-hover border border-dark-600/50 shadow-2xl">
               {/* Video Section with Enhanced Overlay */}
               <div className="relative">
-                {/* Video Container - コンテナにフィット（動画全体表示） */}
-                <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto aspect-[9/16] max-w-sm">
+                {/* Video Container - 自然なサイズ表示 */}
+                <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto max-w-sm">
                   <video 
-                    className="w-full h-full object-contain"
+                    className="w-full h-auto"
                     controls
                     muted
                     preload="metadata"
                     style={{ 
-                      backgroundColor: 'transparent',
-                      objectPosition: 'center center'
+                      backgroundColor: 'transparent'
                     }}
                   >
                     <source src="/videos/paul-fernandez-intro-minimal.mp4" type="video/mp4" />
