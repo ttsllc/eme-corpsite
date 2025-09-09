@@ -85,86 +85,58 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-            {/* Paul Fernandez - Enhanced Design */}
-            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl overflow-hidden card-hover border border-dark-600/50 shadow-2xl">
-              {/* Video Section with Enhanced Overlay */}
-              <div className="relative">
-                {/* Video Container - 自然なサイズ表示 */}
-                <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto max-w-sm">
-                  <video 
-                    className="w-full h-auto"
-                    controls
-                    muted
-                    preload="metadata"
-                    style={{ 
-                      backgroundColor: 'transparent'
-                    }}
-                  >
-                    <source src="/videos/paul-fernandez-intro-minimal.mp4" type="video/mp4" />
-                    <source src="/videos/paul-fernandez-intro-compatible.mp4" type="video/mp4" />
-                    <source src="/videos/IMG_0475.MOV" type="video/quicktime" />
-                    お使いのブラウザは動画をサポートしていません。
-                  </video>
-                  
-                  {/* Commented out VideoPlayer for comparison 
-                  <VideoPlayer
-                    sources={[
-                      { src: '/videos/paul-fernandez-intro-minimal.mp4', type: 'video/mp4' },
-                      { src: '/videos/paul-fernandez-intro-compatible.mp4', type: 'video/mp4' },
-                      { src: '/videos/paul-fernandez-intro-light.mp4', type: 'video/mp4' },
-                      { src: '/videos/paul-fernandez-intro.mp4', type: 'video/mp4' },
-                      { src: '/videos/paul-fernandez-intro.mov', type: 'video/quicktime' },
-                      { src: '/videos/IMG_0475.MOV', type: 'video/quicktime' }
-                    ]}
-                    className="w-full h-full"
-                    controls={true}
-                    muted={true}
-                    preload="metadata"
-                    cropVertical={false}
-                    fallbackContent={
-                      <div className="absolute inset-0 flex items-center justify-center bg-dark-900">
-                        <div className="text-center">
-                          <div className="w-24 h-24 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
-                            <span className="text-3xl font-bold text-dark-900">PF</span>
-                          </div>
-                          <p className="text-white mb-2 font-medium">President Introduction</p>
-                          <p className="text-sm text-dark-400">Your browser doesn't support video playback</p>
-                        </div>
-                      </div>
-                    }
-                  />
-                  */}
-                  
-                  {/* Video Overlay Badge */}
-                  <div className="absolute top-4 left-4 bg-primary-500/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs font-medium text-white">LIVE</span>
-                    </div>
-                  </div>
-                  
-                  {/* Bottom gradient overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-900/80 to-transparent"></div>
-                  
-                  {/* Name Tag Overlay */}
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <div className="bg-dark-900/85 backdrop-blur-sm rounded-lg p-3 border border-dark-600/50">
+            {/* Paul Fernandez - Enhanced Design - Full Width */}
+            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl overflow-hidden card-hover border border-dark-600/50 shadow-2xl lg:col-span-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Video Section with Enhanced Overlay */}
+                <div className="relative p-6 lg:p-8">
+                  {/* Video Container - 自然なサイズ表示 */}
+                  <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto max-w-md">
+                    <video 
+                      className="w-full h-auto"
+                      controls
+                      muted
+                      preload="metadata"
+                      style={{ 
+                        backgroundColor: 'transparent'
+                      }}
+                    >
+                      <source src="/videos/paul-fernandez-intro-minimal.mp4" type="video/mp4" />
+                      <source src="/videos/paul-fernandez-intro-compatible.mp4" type="video/mp4" />
+                      <source src="/videos/IMG_0475.MOV" type="video/quicktime" />
+                      お使いのブラウザは動画をサポートしていません。
+                    </video>
+                    
+                    {/* Video Overlay Badge */}
+                    <div className="absolute top-4 left-4 bg-primary-500/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full flex items-center justify-center shadow-lg">
-                          <span className="text-sm font-bold text-dark-900">PF</span>
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-display font-bold text-white">Paul Fernandez</h4>
-                          <p className="text-primary-400 font-medium text-xs">President & CEO</p>
+                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs font-medium text-white">LIVE</span>
+                      </div>
+                    </div>
+                    
+                    {/* Bottom gradient overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-900/80 to-transparent"></div>
+                    
+                    {/* Name Tag Overlay */}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <div className="bg-dark-900/85 backdrop-blur-sm rounded-lg p-3 border border-dark-600/50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full flex items-center justify-center shadow-lg">
+                            <span className="text-sm font-bold text-dark-900">PF</span>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-display font-bold text-white">Paul Fernandez</h4>
+                            <p className="text-primary-400 font-medium text-xs">President & CEO</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              {/* Enhanced Info Section */}
-              <div className="p-8 space-y-6">
+                
+                {/* Enhanced Info Section */}
+                <div className="p-6 lg:p-8 space-y-6">
                 {/* Introduction */}
                 <div>
                   <h3 className="text-2xl font-display font-bold text-white mb-3 text-gradient">Paul Fernandez</h3>
@@ -247,7 +219,7 @@ export default function About() {
             </div>
 
             {/* Jenny Fernandez */}
-            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl p-8 text-center card-hover border border-dark-600/50 shadow-2xl">
+            <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl p-8 text-center card-hover border border-dark-600/50 shadow-2xl lg:col-span-2 lg:max-w-2xl lg:mx-auto">
               <div className="w-32 h-32 bg-gradient-to-br from-accent-400 to-primary-400 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <span className="text-4xl font-bold text-dark-900">JF</span>
               </div>
