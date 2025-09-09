@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Video Diagnosis Tool</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(45, 55, 72, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .section {
+            background: rgba(45, 55, 72, 0.4);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-container {
+            background: #000;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #4a5568;
+        }
+        .btn {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 8px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        }
+        .btn.danger { background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); }
+        .btn.success { background: linear-gradient(135deg, #38a169 0%, #2f855a 100%); }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        .status.success { background: rgba(56, 161, 105, 0.2); border: 1px solid #38a169; color: #68d391; }
+        .status.error { background: rgba(229, 62, 62, 0.2); border: 1px solid #e53e3e; color: #fc8181; }
+        .status.info { background: rgba(66, 153, 225, 0.2); border: 1px solid #4299e1; color: #90cdf4; }
+        .status.warning { background: rgba(237, 137, 54, 0.2); border: 1px solid #ed8936; color: #fbb040; }
+        .log {
+            background: #1a202c;
+            border: 1px solid #2d3748;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .info-card {
+            background: rgba(26, 32, 44, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .emoji { font-size: 24px; margin-right: 10px; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4299e1;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Paul Fernandez Video Diagnosis</h1>
+            <p>動画再生問題の詳細診断ツール</p>
+            <div id="globalStatus" class="status info">診断準備中...</div>
+        </div>
+
+        <div class="grid">
+            <!-- Video Test Section -->
+            <div class="section">
+                <h2><span class="emoji">🎥</span>Video Playback Test</h2>
+                
+                <div class="video-container">
+                    <h3>Minimal Version (2.5MB)</h3>
+                    <video id="video1" controls preload="metadata" muted>
+                        <source src="/videos/paul-fernandez-intro-minimal.mp4" type="video/mp4">
+                        <div style="padding: 40px; text-align: center; color: #999;">
+                            お使いのブラウザは動画をサポートしていません
+                        </div>
+                    </video>
+                    <div>
+                        <button class="btn" onclick="testPlay(1)">▶️ 再生テスト</button>
+                        <button class="btn" onclick="testPause(1)">⏸️ 停止</button>
+                        <button class="btn" onclick="reloadVideo(1)">🔄 リロード</button>
+                        <button class="btn" onclick="downloadTest(1)">📥 ダウンロードテスト</button>
+                    </div>
+                    <div id="status1" class="status info">待機中...</div>
+                </div>
+
+                <div class="video-container">
+                    <h3>Reference Video (External)</h3>
+                    <video id="videoRef" controls preload="metadata" muted>
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        外部動画が読み込めません
+                    </video>
+                    <div>
+                        <button class="btn" onclick="testPlay('Ref')">▶️ 参考動画再生</button>
+                    </div>
+                    <div id="statusRef" class="status info">外部動画 - ブラウザ基本機能確認用</div>
+                </div>
+            </div>
+
+            <!-- System Info Section -->
+            <div class="section">
+                <h2><span class="emoji">💻</span>System Information</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h4>🌐 Browser</h4>
+                        <div id="browserInfo">Loading...</div>
+                    </div>
+                    <div class="info-card">
+                        <h4>🎬 Video Support</h4>
+                        <div id="videoSupport">Testing...</div>
+                    </div>
+                    <div class="info-card">
+                        <h4>🌍 Network</h4>
+                        <div id="networkInfo">Checking...</div>
+                    </div>
+                    <div class="info-card">
+                        <h4>⚡ Performance</h4>
+                        <div id="performanceInfo">Analyzing...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Details Section -->
+        <div class="section">
+            <h2><span class="emoji">📊</span>Video Details</h2>
+            <div>
+                <button class="btn" onclick="analyzeVideo()">🔍 詳細分析</button>
+                <button class="btn" onclick="networkTest()">🌐 ネットワークテスト</button>
+                <button class="btn success" onclick="runFullDiagnosis()">🚀 完全診断実行</button>
+            </div>
+            <div id="videoDetails" class="status info" style="margin-top: 15px;">
+                「詳細分析」ボタンをクリックして動画情報を表示
+            </div>
+        </div>
+
+        <!-- Log Section -->
+        <div class="section">
+            <h2><span class="emoji">📝</span>Diagnostic Log</h2>
+            <div>
+                <button class="btn" onclick="clearLog()">🗑️ ログクリア</button>
+                <button class="btn" onclick="exportLog()">📋 ログエクスポート</button>
+            </div>
+            <div id="diagnosticLog" class="log">
+                診断ログがここに表示されます...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Logging system
+        const log = (message, type = 'info', component = 'SYSTEM') => {
+            const timestamp = new Date().toLocaleTimeString('ja-JP');
+            const logDiv = document.getElementById('diagnosticLog');
+            const colors = {
+                info: '#90cdf4',
+                success: '#68d391', 
+                error: '#fc8181',
+                warning: '#fbb040'
+            };
+            
+            const entry = document.createElement('div');
+            entry.innerHTML = `<span style="color: #a0aec0;">[${timestamp}]</span> <span style="color: ${colors[type]}; font-weight: bold;">[${component}]</span> ${message}`;
+            entry.style.marginBottom = '5px';
+            
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] [${component}] ${message}`);
+        };
+
+        const updateStatus = (id, message, type = 'info') => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = message;
+                element.className = `status ${type}`;
+            }
+        };
+
+        const updateGlobalStatus = (message, type = 'info') => {
+            updateStatus('globalStatus', message, type);
+        };
+
+        // Video testing functions
+        const testPlay = async (videoId) => {
+            const video = document.getElementById(`video${videoId}`);
+            const statusId = `status${videoId}`;
+            
+            try {
+                updateStatus(statusId, '再生を試行中...', 'info');
+                log(`Video ${videoId} play attempt started`, 'info', 'PLAYER');
+                
+                await video.play();
+                updateStatus(statusId, '✅ 再生成功！', 'success');
+                log(`Video ${videoId} playback successful`, 'success', 'PLAYER');
+                updateGlobalStatus('✅ 動画再生成功 - 問題なし', 'success');
+                
+            } catch (error) {
+                updateStatus(statusId, `❌ 再生エラー: ${error.message}`, 'error');
+                log(`Video ${videoId} playback failed: ${error.message}`, 'error', 'PLAYER');
+                updateGlobalStatus('❌ 動画再生に問題があります', 'error');
+            }
+        };
+
+        const testPause = (videoId) => {
+            const video = document.getElementById(`video${videoId}`);
+            video.pause();
+            updateStatus(`status${videoId}`, '⏸️ 停止', 'info');
+            log(`Video ${videoId} paused`, 'info', 'PLAYER');
+        };
+
+        const reloadVideo = (videoId) => {
+            const video = document.getElementById(`video${videoId}`);
+            updateStatus(`status${videoId}`, '🔄 リロード中...', 'info');
+            video.load();
+            log(`Video ${videoId} reloaded`, 'info', 'PLAYER');
+        };
+
+        const downloadTest = async (videoId) => {
+            try {
+                updateStatus(`status${videoId}`, '📥 ダウンロードテスト中...', 'info');
+                log('Starting download test...', 'info', 'NETWORK');
+                
+                const response = await fetch('/videos/paul-fernandez-intro-minimal.mp4', { method: 'HEAD' });
+                
+                if (response.ok) {
+                    const size = response.headers.get('content-length');
+                    const type = response.headers.get('content-type');
+                    updateStatus(`status${videoId}`, `✅ ダウンロード可能 (${Math.round(size/1024/1024*10)/10}MB, ${type})`, 'success');
+                    log(`Download test successful: ${Math.round(size/1024/1024*10)/10}MB, ${type}`, 'success', 'NETWORK');
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                updateStatus(`status${videoId}`, `❌ ダウンロードエラー: ${error.message}`, 'error');
+                log(`Download test failed: ${error.message}`, 'error', 'NETWORK');
+            }
+        };
+
+        const analyzeVideo = () => {
+            const video = document.getElementById('video1');
+            const details = document.getElementById('videoDetails');
+            
+            const analysis = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div><strong>🎯 Ready State:</strong><br>${getReadyStateText(video.readyState)}</div>
+                    <div><strong>🌐 Network State:</strong><br>${getNetworkStateText(video.networkState)}</div>
+                    <div><strong>⏱️ Duration:</strong><br>${video.duration ? Math.round(video.duration*10)/10 + '秒' : '不明'}</div>
+                    <div><strong>📍 Current Time:</strong><br>${Math.round(video.currentTime*10)/10}秒</div>
+                    <div><strong>⏸️ Paused:</strong><br>${video.paused ? 'はい' : 'いいえ'}</div>
+                    <div><strong>🔚 Ended:</strong><br>${video.ended ? 'はい' : 'いいえ'}</div>
+                    <div><strong>📱 Source:</strong><br>${video.currentSrc ? 'ロード済み' : '未ロード'}</div>
+                    <div><strong>⚠️ Error:</strong><br>${video.error ? `Code: ${video.error.code}` : 'なし'}</div>
+                </div>
+            `;
+            
+            details.innerHTML = analysis;
+            log('Video analysis completed', 'info', 'ANALYZER');
+        };
+
+        const networkTest = async () => {
+            updateGlobalStatus('🌐 ネットワークテスト実行中...', 'info');
+            log('Starting comprehensive network test...', 'info', 'NETWORK');
+            
+            try {
+                // Test various video URLs
+                const tests = [
+                    { url: '/videos/paul-fernandez-intro-minimal.mp4', name: 'Minimal版' },
+                    { url: '/videos/paul-fernandez-intro-compatible.mp4', name: 'Compatible版' },
+                    { url: '/videos/paul-fernandez-intro.mp4', name: '標準版' },
+                ];
+                
+                for (const test of tests) {
+                    try {
+                        const response = await fetch(test.url, { method: 'HEAD' });
+                        const size = response.headers.get('content-length');
+                        log(`${test.name}: ✅ 利用可能 (${Math.round(size/1024/1024*10)/10}MB)`, response.ok ? 'success' : 'warning', 'NETWORK');
+                    } catch (error) {
+                        log(`${test.name}: ❌ エラー - ${error.message}`, 'error', 'NETWORK');
+                    }
+                }
+                
+                updateGlobalStatus('🌐 ネットワークテスト完了', 'success');
+            } catch (error) {
+                log(`Network test failed: ${error.message}`, 'error', 'NETWORK');
+                updateGlobalStatus('❌ ネットワークテストエラー', 'error');
+            }
+        };
+
+        const runFullDiagnosis = async () => {
+            updateGlobalStatus('🚀 完全診断実行中...', 'info');
+            log('=== FULL DIAGNOSIS STARTED ===', 'info', 'DIAGNOSTIC');
+            
+            // Test all components
+            await downloadTest(1);
+            await testPlay(1);
+            analyzeVideo();
+            await networkTest();
+            
+            log('=== FULL DIAGNOSIS COMPLETED ===', 'success', 'DIAGNOSTIC');
+            updateGlobalStatus('✅ 完全診断完了', 'success');
+        };
+
+        const clearLog = () => {
+            document.getElementById('diagnosticLog').innerHTML = '';
+            log('Log cleared', 'info', 'SYSTEM');
+        };
+
+        const exportLog = () => {
+            const logContent = document.getElementById('diagnosticLog').innerText;
+            const blob = new Blob([logContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `video-diagnosis-${new Date().toISOString().slice(0,16)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log('Log exported', 'success', 'SYSTEM');
+        };
+
+        // Helper functions
+        const getReadyStateText = (state) => {
+            const states = ['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA'];
+            return `${state} (${states[state] || 'UNKNOWN'})`;
+        };
+
+        const getNetworkStateText = (state) => {
+            const states = ['NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'];
+            return `${state} (${states[state] || 'UNKNOWN'})`;
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Video Diagnosis Tool initialized', 'success', 'SYSTEM');
+            updateGlobalStatus('診断ツール初期化完了 - テスト開始可能', 'success');
+            
+            // Browser info
+            document.getElementById('browserInfo').innerHTML = `
+                <div style="font-size: 12px;">
+                    <div><strong>Browser:</strong> ${navigator.userAgent.split(' ')[0]}</div>
+                    <div><strong>Platform:</strong> ${navigator.platform}</div>
+                    <div><strong>Language:</strong> ${navigator.language}</div>
+                </div>
+            `;
+            
+            // Video support
+            const video = document.createElement('video');
+            document.getElementById('videoSupport').innerHTML = `
+                <div style="font-size: 12px;">
+                    <div><strong>MP4:</strong> ${video.canPlayType('video/mp4') || '不明'}</div>
+                    <div><strong>H.264:</strong> ${video.canPlayType('video/mp4; codecs="avc1.42E01E"') || '不明'}</div>
+                    <div><strong>WebM:</strong> ${video.canPlayType('video/webm') || '不明'}</div>
+                </div>
+            `;
+            
+            // Network info
+            document.getElementById('networkInfo').innerHTML = `
+                <div style="font-size: 12px;">
+                    <div><strong>Online:</strong> ${navigator.onLine ? 'はい' : 'いいえ'}</div>
+                    <div><strong>Connection:</strong> ${navigator.connection?.effectiveType || '不明'}</div>
+                    <div><strong>URL:</strong> ${window.location.href}</div>
+                </div>
+            `;
+            
+            // Performance info
+            document.getElementById('performanceInfo').innerHTML = `
+                <div style="font-size: 12px;">
+                    <div><strong>Memory:</strong> ${navigator.deviceMemory || '不明'}GB</div>
+                    <div><strong>Cores:</strong> ${navigator.hardwareConcurrency || '不明'}</div>
+                    <div><strong>Viewport:</strong> ${window.innerWidth}x${window.innerHeight}</div>
+                </div>
+            `;
+
+            // Set up video event listeners
+            const video1 = document.getElementById('video1');
+            const videoRef = document.getElementById('videoRef');
+
+            [video1, videoRef].forEach((video, index) => {
+                const id = index === 0 ? '1' : 'Ref';
+                
+                video.addEventListener('loadstart', () => log(`Video ${id} load started`, 'info', 'VIDEO'));
+                video.addEventListener('loadedmetadata', () => log(`Video ${id} metadata loaded`, 'success', 'VIDEO'));
+                video.addEventListener('loadeddata', () => log(`Video ${id} data loaded`, 'success', 'VIDEO'));
+                video.addEventListener('canplay', () => log(`Video ${id} can play`, 'success', 'VIDEO'));
+                video.addEventListener('canplaythrough', () => log(`Video ${id} can play through`, 'success', 'VIDEO'));
+                video.addEventListener('error', (e) => {
+                    const error = video.error;
+                    log(`Video ${id} error: Code ${error?.code} - ${error?.message}`, 'error', 'VIDEO');
+                });
+                video.addEventListener('play', () => log(`Video ${id} started playing`, 'success', 'VIDEO'));
+                video.addEventListener('pause', () => log(`Video ${id} paused`, 'info', 'VIDEO'));
+                video.addEventListener('ended', () => log(`Video ${id} ended`, 'info', 'VIDEO'));
+            });
+        });
+    </script>
+</body>
+</html>

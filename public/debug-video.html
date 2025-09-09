@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Debug Tool</title>
+    <style>
+        body { background: #111; color: white; font-family: Arial, sans-serif; padding: 20px; }
+        .video-container { margin: 20px 0; padding: 20px; border: 1px solid #333; border-radius: 8px; }
+        .status { margin: 10px 0; padding: 10px; background: #222; border-radius: 4px; }
+        .error { background: #500; }
+        .success { background: #050; }
+        .info { background: #005; }
+        video { width: 100%; max-width: 640px; background: #222; }
+        button { margin: 5px; padding: 10px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #555; }
+    </style>
+</head>
+<body>
+    <h1>🎬 Paul Fernandez Video Debug Tool</h1>
+    
+    <div class="video-container">
+        <h2>互換性版 (7.1MB) - 推奨</h2>
+        <div id="status1" class="status info">待機中...</div>
+        <video id="video1" controls preload="metadata">
+            <source src="/videos/paul-fernandez-intro-compatible.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div>
+            <button onclick="testVideo(1)">再生テスト</button>
+            <button onclick="checkFile(1)">ファイル確認</button>
+            <button onclick="showInfo(1)">詳細情報</button>
+        </div>
+        <small style="color: #999;">Baseline Profile, yuv420p, 640x480</small>
+    </div>
+
+    <div class="video-container">
+        <h2>標準版 (26MB)</h2>
+        <div id="status2" class="status info">待機中...</div>
+        <video id="video2" controls preload="metadata">
+            <source src="/videos/paul-fernandez-intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div>
+            <button onclick="testVideo(2)">再生テスト</button>
+            <button onclick="checkFile(2)">ファイル確認</button>
+            <button onclick="showInfo(2)">詳細情報</button>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <h2>システム情報</h2>
+        <div id="systemInfo" class="status info">
+            <p><strong>ブラウザ:</strong> <span id="browserInfo"></span></p>
+            <p><strong>対応形式:</strong> <span id="supportInfo"></span></p>
+            <p><strong>ネットワーク:</strong> <span id="networkInfo"></span></p>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <h2>ログ</h2>
+        <div id="log" class="status" style="max-height: 300px; overflow-y: auto;"></div>
+        <button onclick="clearLog()">ログクリア</button>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            entry.style.color = type === 'error' ? '#ff6666' : type === 'success' ? '#66ff66' : '#66ccff';
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateStatus(videoNum, message, type = 'info') {
+            const status = document.getElementById(`status${videoNum}`);
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function testVideo(videoNum) {
+            const video = document.getElementById(`video${videoNum}`);
+            updateStatus(videoNum, '再生テスト中...', 'info');
+            log(`Video ${videoNum}: 再生テスト開始`);
+            
+            video.currentTime = 0;
+            video.play().then(() => {
+                updateStatus(videoNum, '再生成功！', 'success');
+                log(`Video ${videoNum}: 再生成功`, 'success');
+            }).catch(error => {
+                updateStatus(videoNum, `再生エラー: ${error.message}`, 'error');
+                log(`Video ${videoNum}: 再生エラー - ${error.message}`, 'error');
+            });
+        }
+
+        function checkFile(videoNum) {
+            const video = document.getElementById(`video${videoNum}`);
+            const src = video.querySelector('source').src;
+            
+            updateStatus(videoNum, 'ファイル確認中...', 'info');
+            log(`Video ${videoNum}: ファイル確認 - ${src}`);
+            
+            fetch(src, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        const size = response.headers.get('content-length');
+                        const type = response.headers.get('content-type');
+                        updateStatus(videoNum, `ファイル OK (${(size/1024/1024).toFixed(1)}MB, ${type})`, 'success');
+                        log(`Video ${videoNum}: ファイル確認成功 - Size: ${(size/1024/1024).toFixed(1)}MB, Type: ${type}`, 'success');
+                    } else {
+                        updateStatus(videoNum, `ファイルエラー: ${response.status}`, 'error');
+                        log(`Video ${videoNum}: ファイルエラー - Status: ${response.status}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    updateStatus(videoNum, `ネットワークエラー: ${error.message}`, 'error');
+                    log(`Video ${videoNum}: ネットワークエラー - ${error.message}`, 'error');
+                });
+        }
+
+        function showInfo(videoNum) {
+            const video = document.getElementById(`video${videoNum}`);
+            log(`Video ${videoNum} 詳細情報:`);
+            log(`- Ready State: ${video.readyState}`);
+            log(`- Network State: ${video.networkState}`);
+            log(`- Duration: ${video.duration}`);
+            log(`- Current Time: ${video.currentTime}`);
+            log(`- Paused: ${video.paused}`);
+            log(`- Ended: ${video.ended}`);
+            log(`- Error: ${video.error ? video.error.message : 'なし'}`);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        // システム情報の取得
+        function getSystemInfo() {
+            const browserInfo = navigator.userAgent;
+            document.getElementById('browserInfo').textContent = browserInfo;
+
+            // 動画対応形式の確認
+            const video = document.createElement('video');
+            const formats = [
+                'video/mp4; codecs="avc1.42E01E"',
+                'video/quicktime',
+                'video/webm',
+                'video/ogg'
+            ];
+            
+            const supported = formats.filter(format => video.canPlayType(format) !== '');
+            document.getElementById('supportInfo').textContent = supported.length > 0 ? supported.join(', ') : '対応形式なし';
+
+            // ネットワーク状態とURL情報
+            const currentUrl = window.location.href;
+            document.getElementById('networkInfo').textContent = `${navigator.onLine ? 'オンライン' : 'オフライン'} | ${currentUrl}`;
+        }
+
+        // 各動画にイベントリスナーを追加
+        [1, 2].forEach(num => {
+            const video = document.getElementById(`video${num}`);
+            
+            video.addEventListener('loadstart', () => {
+                log(`Video ${num}: 読み込み開始`);
+                updateStatus(num, '読み込み中...', 'info');
+            });
+            
+            video.addEventListener('loadedmetadata', () => {
+                log(`Video ${num}: メタデータ読み込み完了`);
+            });
+            
+            video.addEventListener('loadeddata', () => {
+                log(`Video ${num}: データ読み込み完了`, 'success');
+                updateStatus(num, '読み込み完了', 'success');
+            });
+            
+            video.addEventListener('canplay', () => {
+                log(`Video ${num}: 再生可能`, 'success');
+                updateStatus(num, '再生準備OK', 'success');
+            });
+            
+            video.addEventListener('error', (e) => {
+                const error = video.error;
+                log(`Video ${num}: エラー発生 - Code: ${error.code}, Message: ${error.message}`, 'error');
+                updateStatus(num, `エラー: ${error.message}`, 'error');
+            });
+            
+            video.addEventListener('play', () => {
+                log(`Video ${num}: 再生開始`, 'success');
+            });
+            
+            video.addEventListener('pause', () => {
+                log(`Video ${num}: 一時停止`);
+            });
+        });
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            getSystemInfo();
+            log('デバッグツール初期化完了');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Test</title>
+</head>
+<body style="background: #111; color: white; font-family: Arial, sans-serif;">
+    <h1>Paul Fernandez Video Test</h1>
+    
+    <h2>Lightweight Version (5.8MB)</h2>
+    <video controls width="640" style="background: #222;">
+        <source src="/videos/paul-fernandez-intro-light.mp4" type="video/mp4">
+        Video not supported
+    </video>
+    
+    <h2>Original Version (26MB)</h2>
+    <video controls width="640" style="background: #222;">
+        <source src="/videos/paul-fernandez-intro.mp4" type="video/mp4">
+        Video not supported
+    </video>
+    
+    <h2>MOV Version (51MB)</h2>
+    <video controls width="640" style="background: #222;">
+        <source src="/videos/paul-fernandez-intro.mov" type="video/quicktime">
+        <source src="/videos/IMG_0475.MOV" type="video/quicktime">
+        Video not supported
+    </video>
+    
+    <script>
+        // Add error handling
+        document.querySelectorAll('video').forEach((video, index) => {
+            video.addEventListener('loadstart', () => {
+                console.log(`Video ${index + 1}: Load started`);
+            });
+            
+            video.addEventListener('loadeddata', () => {
+                console.log(`Video ${index + 1}: Data loaded`);
+            });
+            
+            video.addEventListener('canplay', () => {
+                console.log(`Video ${index + 1}: Can play`);
+            });
+            
+            video.addEventListener('error', (e) => {
+                console.error(`Video ${index + 1} error:`, e);
+            });
+        });
+    </script>
+</body>
+</html>
