@@ -89,10 +89,10 @@ export default function About() {
             <div className="bg-gradient-to-br from-dark-700 to-dark-800 rounded-3xl overflow-hidden card-hover border border-dark-600/50 shadow-2xl">
               {/* Video Section with Enhanced Overlay */}
               <div className="relative">
-                {/* Video Container - 中央部分クロップで顔を強調 */}
+                {/* Video Container - コンテナにフィット（動画全体表示） */}
                 <div className="relative bg-dark-900 rounded-lg overflow-hidden mx-auto aspect-[9/16] max-w-sm">
                   <video 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     controls
                     muted
                     preload="metadata"
