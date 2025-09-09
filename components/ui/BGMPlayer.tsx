@@ -118,9 +118,9 @@ const BGMPlayer = ({ src, className = '' }: BGMPlayerProps) => {
           </div>
 
           {/* BGMラベル */}
-          <div className="text-xs text-dark-300">
-            <div className="font-medium text-white">BGM</div>
-            <div className="text-xs opacity-75">Rap Verse</div>
+          <div className="text-xs text-dark-300 max-w-32">
+            <div className="font-medium text-white text-sm">GHOST</div>
+            <div className="text-xs opacity-75">by Paul Fernandez</div>
           </div>
         </div>
       </div>
